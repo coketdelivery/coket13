@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>코켓배송 - 걸코충 MBTI테스트</title>
+  <style>
+    body { margin: 0; padding: 0; font-family: Arial, sans-serif; background: #FFF5F8; }
+    .intro { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: url('1.JPG') center/cover no-repeat; z-index: 1000; }
+    .intro-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .intro-overlay h1 { font-size: 2rem; margin-bottom: 20px; color: #333; }
+    #startBtn { background: #FFD54F; border: none; border-radius: 20px; padding: 12px 30px; font-size: 1.2rem; cursor: pointer; }
+    #startBtn:hover { background: #FFCA28; }
+    .container { width: 100vw; min-height: 100vh; display: flex; flex-direction: column; }
+    .header { text-align: center; font-size: 1.4rem; padding: 15px; background: #FFF; color: #E91E63; border-bottom: 1px solid #eee; }
+    .scale { border: 2px dashed #E91E63; border-radius: 12px; padding: 10px; margin: 15px; font-size: 0.9rem; color: #555; text-align: center; }
+    #quiz, #result { flex: 1; padding: 0 15px; box-sizing: border-box; }
+    .question { font-size: 1.1rem; margin: 20px 0 15px; color: #333; }
+    .options { list-style: none; padding: 0; margin: 0 0 20px; }
+    .options li { background: #FFE4EC; margin: 8px 0; border-radius: 20px; padding: 12px; display: flex; align-items: center; }
+    .options input { margin-right: 10px; }
+    .nav { display: flex; justify-content: space-between; padding: 0 15px 20px; }
+    .nav button { width: 48%; padding: 12px; border: none; border-radius: 20px; font-size: 1rem; cursor: pointer; }
+    .prev { background: #F8BBD0; }
+    .prev:hover { background: #F48FB1; }
+    .next { background: #E91E63; color: #fff; }
+    .next:hover { background: #C2185B; }
+    #restartBtn { display: none; margin: 20px auto; background: #FFD54F; border: none; border-radius: 20px; padding: 12px 30px; font-size: 1rem; cursor: pointer; }
+    #result h2 { text-align: center; color: #E91E63; margin: 10px 0; }
+    #result p.description { margin: 0 15px 20px; line-height: 1.5; color: #333; text-align: center; }
+    #result .ad { text-align: center; margin: 20px 0; font-size: 1.2rem; }
+    #result .ad p { margin: 5px 0; }
+    #result .ad a { color: #E91E63; text-decoration: none; }
+    footer { text-align: center; padding: 15px; font-size: 0.8rem; color: #888; border-top: 1px solid #eee; }
+    footer a { color: #E91E63; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="intro">
+    <div class="intro-overlay">
+    <h1>코켓배송 - 걸코충 MBTI테스트</h1>
+    <p>💖총 60개 문제입니다.💖</p>
+    <p>유튜브 '결코_Gulko' 저작권 콘텐츠입니다.</p>
+    <p>© 2025 코켓게임즈. All rights reserved.<br>
+      <a href="https://www.youtube.com/@Gulko" target="_blank">https://www.youtube.com/@Gulko</a>
+    </p>
+      <button id="startBtn">테스트 시작</button>
+    </div>
+  </div>
+
+  <audio id="bgm" src="1.MP3" loop></audio>
+  <audio id="clickSound" src="2.MP3"></audio>
+
+  <div class="container">
+    <div class="header">💖코켓배송 - 걸코충 MBTI테스트💖</div>
+    <div class="scale">
+	    <p>💖총 60개 문제입니다.💖</p>
+	    <p>1: 전혀 그렇지 않다 | 2: 그렇지 않다 | </p>
+		<p>3: 보통이다 | 4: 그렇다 | 5: 매우 그렇다</div>
+    <div id="quiz">
+      <div class="question" id="questionText"></div>
+      <ul class="options" id="optionsList"></ul>
+      <div class="nav">
+        <button class="prev" id="prevBtn" disabled>← 이전</button>
+        <button class="next" id="nextBtn" disabled>다음 →</button>
+      </div>
+    </div>
+    <div id="result" style="display:none;"></div>
+    <button id="restartBtn">다시 하기</button>
+    <footer>
+        유튜브 '걸코_Gulko' 저작권 콘텐츠입니다.
+       <a href="https://www.youtube.com/@Gulko" target="_blank">https://www.youtube.com/@Gulko</a>
+       <br>
+         © 2025 코켓게임즈. All rights reserved.
+      </footer>
+  </div>
+
+  <script>
+    const introEl = document.querySelector('.intro');
+    const startBtn = document.getElementById('startBtn');
+    const bgm = document.getElementById('bgm');
+    const clickSound = document.getElementById('clickSound');
+    const headerEl = document.querySelector('.header');
+    const scaleEl = document.querySelector('.scale');
+    const quizEl = document.getElementById('quiz');
+    const resultEl = document.getElementById('result');
+    const optionsList = document.getElementById('optionsList');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const qText = document.getElementById('questionText');
+
+    const questions = [
+      // EI (15)
+      {q:'혼자 책 읽는 것보다 친구와 대화하는 것이 더 즐겁다.',dim:'EI'},
+      {q:'모임에서 먼저 인사를 건네는 편이다.',dim:'EI'},
+      {q:'여러 사람 앞에서 말하는 것이 부담스럽지 않다.',dim:'EI'},
+      {q:'새로운 사람을 만나는 것이 흥미롭다.',dim:'EI'},
+      {q:'혼자 생각할 시간보다 활동적인 시간이 좋다.',dim:'EI'},
+      {q:'아이디어를 공유하는 것을 좋아한다.',dim:'EI'},
+      {q:'파티에서 활발하게 움직인다.',dim:'EI'},
+      {q:'즉흥적으로 계획을 세우는 것이 즐겁다.',dim:'EI'},
+      {q:'친구와 함께하는 일정이 에너지를 준다.',dim:'EI'},
+      {q:'소셜 미디어에 글을 자주 올린다.',dim:'EI'},
+      {q:'대화 중에 주제를 이끌어가는 편이다.',dim:'EI'},
+      {q:'사람들에게 관심을 보이고 받는 것이 좋다.',dim:'EI'},
+      {q:'낯선 장소에서도 빠르게 적응한다.',dim:'EI'},
+      {q:'그룹 프로젝트가 동기부여가 된다.',dim:'EI'},
+      {q:'어딜 가든 친구들과 가는 것이 편하다.',dim:'EI'},
+      // SN (15)
+      {q:'구체적인 사실을 먼저 확인하는 편이다.',dim:'SN'},
+      {q:'경험을 통해 배우는 것을 선호한다.',dim:'SN'},
+      {q:'세부 사항에 집중하는 것이 편하다.',dim:'SN'},
+      {q:'현실적인 해결책을 찾는 데 관심이 많다.',dim:'SN'},
+      {q:'눈에 보이는 정보를 중시한다.',dim:'SN'},
+      {q:'구체적인 예시로 이해가 잘된다.',dim:'SN'},
+      {q:'실제 상황에서 시험해 보는 것을 좋아한다.',dim:'SN'},
+      {q:'계획을 실제로 수행하는 것이 중요하다.',dim:'SN'},
+      {q:'눈에 보이지 않는 것보다 보이는 것을 믿는다.',dim:'SN'},
+      {q:'단계별 절차를 따르는 것을 편안하게 느낀다.',dim:'SN'},
+      {q:'일상의 작은 변화도 놓치지 않는다.',dim:'SN'},
+      {q:'즉시 적용 가능한 지식을 선호한다.',dim:'SN'},
+      {q:'현재의 현상을 분석하는 것을 즐긴다.',dim:'SN'},
+      {q:'디테일한 관찰이 재미있다.',dim:'SN'},
+      {q:'전통적인 방법을 신뢰하는 편이다.',dim:'SN'},
+      // TF (15)
+      {q:'논리적으로 생각하는 것이 편하다.',dim:'TF'},
+      {q:'공정하게 판단하려고 노력한다.',dim:'TF'},
+      {q:'감정보다 사실에 근거해 말한다.',dim:'TF'},
+      {q:'객관적인 피드백을 선호한다.',dim:'TF'},
+      {q:'규칙과 원칙을 중요하게 여긴다.',dim:'TF'},
+      {q:'문제를 분석적으로 접근한다.',dim:'TF'},
+      {q:'비판적인 시각을 갖는 편이다.',dim:'TF'},
+      {q:'감정보다 이성을 우선시한다.',dim:'TF'},
+      {q:'토론에서 논리가 중요한 역할을 한다.',dim:'TF'},
+      {q:'사실 관계를 명확히 하는 것을 좋아한다.',dim:'TF'},
+      {q:'객관적인 증거에 신뢰를 둔다.',dim:'TF'},
+      {q:'일에 집중할 때 감정을 배제하는 편이다.',dim:'TF'},
+      {q:'의사결정 시 분석적 접근을 사용한다.',dim:'TF'},
+      {q:'토론에서 합리성을 중시한다.',dim:'TF'},
+      {q:'감정보다 데이터를 우선적으로 본다.',dim:'TF'},
+      // JP (15)
+      {q:'계획을 세우고 그에 맞게 행동하는 편이다.',dim:'JP'},
+      {q:'일정표를 작성하는 것을 선호한다.',dim:'JP'},
+      {q:'마감 시간을 철저히 지킨다.',dim:'JP'},
+      {q:'정리정돈이 잘 되어 있어야 안심된다.',dim:'JP'},
+      {q:'우선순위를 명확하게 정한다.',dim:'JP'},
+      {q:'사전에 준비하는 것을 좋아한다.',dim:'JP'},
+      {q:'시간 관리를 체계적으로 한다.',dim:'JP'},
+      {q:'변동 없는 루틴이 편안하다.',dim:'JP'},
+      {q:'세부 사항까지 꼼꼼히 챙긴다.',dim:'JP'},
+      {q:'미리 예상 문제를 대비한다.',dim:'JP'},
+      {q:'체크리스트를 만드는 습관이 있다.',dim:'JP'},
+      {q:'작업을 단계별로 진행한다.',dim:'JP'},
+      {q:'즉흥적인 변경에 불안감을 느낀다.',dim:'JP'},
+      {q:'계획대로 일이 진행되길 원한다.',dim:'JP'},
+      {q:'준비가 끝나야 시작할 수 있다.',dim:'JP'}
+    ];
+    const scores = {E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
+    const typeDescriptions = {
+      ISTJ: '청렴 검사형: 책임감이 강하고 현실적이며 신뢰할 수 있는 관리자입니다.',
+      ISFJ: '용감한 수호자형: 헌신적이고 친절하며 타인의 필요를 잘 돌봅니다.',
+      INFJ: '정의로운 옹호자형: 통찰력 있고 이상주의적이며 깊은 공감 능력을 지녔습니다.',
+      INTJ: '용의주도한 전략가형: 독창적이고 분석적이며 장기적 계획에 능숙합니다.',
+      ISTP: '만능 재주꾼형: 실용적이고 관찰력이 뛰어나며 위기 상황에 침착합니다.',
+      ISFP: '호기심 많은 예술가형: 온화하고 유연하며 미적 감각이 뛰어납니다.',
+      INFP: '열정적인 중재자형: 이상주의적이고 충실하며 깊이 있는 가치관을 가집니다.',
+      INTP: '논리적인 사색가형: 분석적이고 창의적이며 이론적 탐구를 즐깁니다.',
+      ESTP: '모험을 즐기는 사업가형: 활동적이고 대담하며 즉각적인 행동을 선호합니다.',
+      ESFP: '자발적인 활동가형: 사교적이고 열정적이며 현재를 즐기는 데 능숙합니다.',
+      ENFP: '재기 발랄한 활동가형: 창의적이고 사교적이며 새로운 가능성에 열려 있습니다.',
+      ENTP: '뜨거운 논쟁을 즐기는 변론가형: 창의적이고 독창적이며 아이디어 토론을 선호합니다.',
+      ESTJ: '엄격한 관리자형: 조직적이고 현실적이며 효율성을 중요시합니다.',
+      ESFJ: '사교적인 외교관형: 친절하고 협력적이며 사회적 조화를 중시합니다.',
+      ENFJ: '정의로운 사회운동가형: 리더십이 뛰어나며 타인을 격려하고 영감을 줍니다.',
+      ENTJ: '대담한 통솔자형: 결단력 있고 목표 지향적이며 조직 운영에 탁월합니다.'
+    };
+    let current = 0;
+    headerEl.style.display = 'none'; scaleEl.style.display = 'none'; quizEl.style.display = 'none';
+    function playClick() { clickSound.currentTime = 0; clickSound.play(); }
+    startBtn.addEventListener('click', () => { playClick(); introEl.style.display='none'; headerEl.style.display='block'; scaleEl.style.display='block'; quizEl.style.display='block'; renderQuestion(); bgm.play(); });
+    prevBtn.addEventListener('click', () => { playClick(); if(current>0){current--;renderQuestion();}});
+    nextBtn.addEventListener('click', () => { playClick(); const choice=document.querySelector('input[name="choice"]:checked'); const val=+choice.value; const dim=questions[current].dim; if(val>3) scores[dim[0]]++; else if(val<3) scores[dim[1]]++; current++; if(current<questions.length) renderQuestion(); else showResult(); });
+    restartBtn.addEventListener('click', ()=>{ playClick(); current=0; for(let k in scores) scores[k]=0; headerEl.style.display='block'; scaleEl.style.display='block'; quizEl.style.display='block'; renderQuestion(); bgm.play(); });
+    function renderQuestion(){ resultEl.style.display='none'; restartBtn.style.display='none'; const q=questions[current]; qText.textContent=`Q${current+1}. ${q.q}`; optionsList.innerHTML=''; for(let i=1;i<=5;i++){ const li=document.createElement('li'); li.innerHTML=`<label><input type=\"radio\" name=\"choice\" value=\"${i}\"> ${i}</label>`; optionsList.appendChild(li);} prevBtn.disabled=current===0; nextBtn.disabled=true; }
+    optionsList.addEventListener('change',()=>nextBtn.disabled=false);
+    function showResult(){ headerEl.style.display='none'; scaleEl.style.display='none'; quizEl.style.display='none'; const mbti=(scores.E>scores.I?'E':'I')+(scores.S>scores.N?'S':'N')+(scores.T>scores.F?'T':'F')+(scores.J>scores.P?'J':'P'); resultEl.innerHTML=`<h2>당신의 MBTI 유형은: ${mbti} 입니다!</h2><p class="description">${typeDescriptions[mbti]}</p><div class="ad"><p>코팡 구입은 걸코와 함께</p><p><a href=\"https://www.youtube.com/@Gulko\" target=\"_blank\">https://www.youtube.com/@Gulko</a></p><p>사랑합니다. 고객님</p></div>`; resultEl.style.display='block'; restartBtn.style.display='block'; }
+  </script>
+</body>
+</html>
